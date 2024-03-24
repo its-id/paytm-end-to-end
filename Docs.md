@@ -1,5 +1,3 @@
-# paytm-end-to-end
-
 ## Understanding Architecture
 
 1. When we click on "Pay now", the request goes to the HDFC bank server.
