@@ -27,6 +27,17 @@
 6. `npm i` to install the dependencies.
 7. `npm run dev` to start the server.
 
+- Access the **User App** at `http://localhost:3001`
+- Access the **Merchant App** at `http://localhost:3000`
+
+---
+
+## See Database Table in a GUI
+
+1. Go to the `packages/db` folder.
+2. Run `npx prisma studio` to open the Prisma Studio.
+3. You can see the tables and their data in the GUI.
+
 ---
 
 
