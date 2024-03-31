@@ -1,3 +1,5 @@
+**Check `Docs.md` for the project details and further instructions.**
+
 ## Starting the project
 
 1. Get a Postgres Database URL.
