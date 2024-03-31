@@ -201,7 +201,7 @@ Similarly, create Dockerfile for `merchant-app` and `bank-webhook` services.
 ---
 
 
-## Deploying to EC2 machine
+## Deploying to EC2 machine 
 
 1. Create an EC2 instance in AWS.
 <br/>
