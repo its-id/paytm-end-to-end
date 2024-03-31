@@ -1,5 +1,5 @@
 name: Build on PR
-'on':
+on:
   pull_request:
     branches:
       - master
