@@ -71,7 +71,7 @@ Does the following work on each commit:
 - Running tests
 - Checking for code quality
 
-## What is Continous Deployment?
+## What is Continous Deployment? 
 
 Continous Deployment is the practice of automatically deploying new code to production.
 This is done by having a pipeline that automatically deploys the code to production after it has been built, tested and checked for code quality.
