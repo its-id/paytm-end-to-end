@@ -183,7 +183,7 @@ Similarly, create Dockerfile for `merchant-app` and `bank-webhook` services.
 
 ---
 
-## Setting up CD Pipeline in Github
+## Setting up CD Pipeline in Github 
 
 1. Create another .yaml file in the root of the repository (`.github/workflows/deploy.yml`).
 
