@@ -58,7 +58,7 @@
    - a dummy bank server.
    - a pure backend server which will work as a webhook handler that will handle the bank's response and payment requests.
 
-3. Go to `bank_webhook_handler` folder to see next steps.
+3. Go to `bank_webhook` folder to see next steps.
 
 
 ---
