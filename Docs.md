@@ -58,7 +58,7 @@
    - a dummy bank server.
    - a pure backend server which will work as a webhook handler that will handle the bank's response and payment requests.
 
-3. Go to `bank_webhook_handler` folder to see next steps.
+3. Go to `bank_webhook` folder to see next steps.
 
 ---
 
@@ -89,8 +89,8 @@ This is done by having a pipeline that automatically deploys the code to product
 
 ## Setting up CI Pipeline in Github
 
-1. **Create a new repository**: Create a new repository in Github or clone the monorepo (paytm-end-to-end)[https://github.com/its-id/paytm-end-to-end.git].
-   <br/>
+1. **Create a new repository**: Create a new repository in Github or fork the monorepo [paytm-end-to-end](https://github.com/its-id/paytm-end-to-end.git).
+<br/>
 
 2. Create a .yaml file in the root of the repository (`.github/workflows/build.yml`). This file will contain the configuration for the CI pipeline (basically, the steps that need to be executed when a commit is made to the repository).
    <br/>
@@ -193,7 +193,7 @@ Similarly, create Dockerfile for `merchant-app` and `bank-webhook` services.
 
    > This file will contain the configuration for CD Pipeline of pushing the image to `dockerhub` (basically, the steps that need to be executed when a commit is made to the repository).
 
-2. Create a new docker repository in [dockerhub](https://hub.docker.com/repository/).
+2. Create a new docker repository in [dockerhub](https://hub.docker.com/repository).
 
 3. Go to Github repository settings and add the following secrets:
 
