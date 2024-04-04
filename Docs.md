@@ -60,18 +60,17 @@
 
 3. Go to `bank_webhook_handler` folder to see next steps.
 
-
 ---
-
 
 ## What is Continous Integration?
 
 Does the following work on each commit:
+
 - Building the project
 - Running tests
 - Checking for code quality
 
-## What is Continous Deployment? 
+## What is Continous Deployment?
 
 Continous Deployment is the practice of automatically deploying new code to production.
 This is done by having a pipeline that automatically deploys the code to production after it has been built, tested and checked for code quality.
@@ -91,52 +90,53 @@ This is done by having a pipeline that automatically deploys the code to product
 ## Setting up CI Pipeline in Github
 
 1. **Create a new repository**: Create a new repository in Github or clone the monorepo (paytm-end-to-end)[https://github.com/its-id/paytm-end-to-end.git].
-<br/>
+   <br/>
 
 2. Create a .yaml file in the root of the repository (`.github/workflows/build.yml`). This file will contain the configuration for the CI pipeline (basically, the steps that need to be executed when a commit is made to the repository).
-<br/>
+   <br/>
 
 3. Add the following code to the `build.yml` file:
-    ```yaml
-    name: Build on PR
 
-    on:
-      pull_request:
-        branches:
-          - master
+   ```yaml
+   name: Build on PR
 
-    jobs:
-      build:
-        runs-on: ubuntu-latest
-        steps:
-          - uses: actions/checkout@v3
-          - name: Use Node.js
-            uses: actions/setup-node@v3
-            with:
-              node-version: '20'
-          
-          - name: Install Dependencies
-            run: npm install
-            
-          - name: Run Build
-            run: npm run build
-    ```
+   on:
+     pull_request:
+       branches:
+         - master
 
-    <details>
-    <summary>Explaining above file</summary>
+   jobs:
+     build:
+       runs-on: ubuntu-latest
+       steps:
+         - uses: actions/checkout@v3
+         - name: Use Node.js
+           uses: actions/setup-node@v3
+           with:
+             node-version: '20'
 
-      - `name`: The name of the workflow.
-      - `on`: The event that triggers the workflow. In this case, the workflow is triggered when a pull request is made to the master branch.
-      - `jobs`: The jobs that need to be executed when the workflow is triggered.
-      - `build`: The name of the job.
-      - `runs-on`: The operating system on which the job needs to be executed.
-      - `steps`: The steps that need to be executed in the job.
-      - `uses`: The action that needs to be used in the step.
-      - `actions/checkout@v3`: The action that checks out the code from the repository. (open-source)
-      - `actions/setup-node@v3`: The action that sets up Node.js. (open-source)
-      - `node-version`: The version of Node.js that needs to be set up.
-      - `run`: The command that needs to be executed in the step.
-    </details>
+         - name: Install Dependencies
+           run: npm install
+
+         - name: Run Build
+           run: npm run build
+   ```
+
+   <details>
+   <summary>Explaining above file</summary>
+
+   - `name`: The name of the workflow.
+   - `on`: The event that triggers the workflow. In this case, the workflow is triggered when a pull request is made to the master branch.
+   - `jobs`: The jobs that need to be executed when the workflow is triggered.
+   - `build`: The name of the job.
+   - `runs-on`: The operating system on which the job needs to be executed.
+   - `steps`: The steps that need to be executed in the job.
+   - `uses`: The action that needs to be used in the step.
+   - `actions/checkout@v3`: The action that checks out the code from the repository. (open-source)
+   - `actions/setup-node@v3`: The action that sets up Node.js. (open-source)
+   - `node-version`: The version of Node.js that needs to be set up.
+   - `run`: The command that needs to be executed in the step.
+   </details>
 
 4. Push the changes to the repository and see the CI pipeline in action in every commit.
 
@@ -144,125 +144,130 @@ This is done by having a pipeline that automatically deploys the code to product
 
 ## Dockerizing the application
 
-Dockerize the application by creating a `Dockerfile` for each service inside `docker` folder in root of the repository. This file will contain the configuration for the Docker image that needs to be created. 
+Dockerize the application by creating a `Dockerfile` for each service inside `docker` folder in root of the repository. This file will contain the configuration for the Docker image that needs to be created.
 
 1. **Creating Dockerfile for `user-app`**:
-    ```Dockerfile
-    FROM node:20.12.0-alpine3.19
 
-    WORKDIR /usr/src/app
+   ```Dockerfile
+   FROM node:20.12.0-alpine3.19
 
-    COPY package.json package-lock.json turbo.json tsconfig.json ./
+   WORKDIR /usr/src/app
 
-    COPY apps ./apps
-    COPY packages ./packages
+   COPY package.json package-lock.json turbo.json tsconfig.json ./
 
-    # Install dependencies
-    RUN npm install
+   COPY apps ./apps
+   COPY packages ./packages
 
-    # Global package.json script to generate prisma client
-    RUN npm run db:generate
+   # Install dependencies
+   RUN npm install
 
-    # Can you filter the build down to just one app?
-    RUN npm run build
+   # Global package.json script to generate prisma client
+   RUN npm run db:generate
 
-    CMD ["npm", "run", "start-user-app"]
-    ```
+   # Can you filter the build down to just one app?
+   RUN npm run build
+
+   CMD ["npm", "run", "start-user-app"]
+   ```
 
 2. Build the Docker image by running the following command:
-    ```sh
-    docker build -t user-app -f docker/Dockerfile.user .
-    ```
+
+   ```sh
+   docker build -t user-app -f docker/Dockerfile.user .
+   ```
 
 3. Run the Docker image by running the following command:
-    ```sh
-    docker run -p 3001:3001 user-app
-    ```
+   ```sh
+   docker run -p 3001:3001 user-app
+   ```
 
 Similarly, create Dockerfile for `merchant-app` and `bank-webhook` services.
 
 ---
 
-## Setting up CD Pipeline in Github 
+## Setting up CD Pipeline in Github
 
 1. Create another .yaml file in the root of the repository (`.github/workflows/deploy.yml`).
 
-    <br>
+   <br>
 
-    > This file will contain the configuration for CD Pipeline of pushing the image to `dockerhub` (basically, the steps that need to be executed when a commit is made to the repository).
-
+   > This file will contain the configuration for CD Pipeline of pushing the image to `dockerhub` (basically, the steps that need to be executed when a commit is made to the repository).
 
 2. Create a new docker repository in [dockerhub](https://hub.docker.com/repository/).
 
 3. Go to Github repository settings and add the following secrets:
-    - `DOCKER_USERNAME`: Your dockerhub username.
-    - `DOCKER_PASSWORD`: Your dockerhub password.
+
+   - `DOCKER_USERNAME`: Your dockerhub username.
+   - `DOCKER_PASSWORD`: Your dockerhub password.
+    <br>
+
+   ![alt text](/assets/github-secrets-page.png)
 
 ---
 
-
-## Deploying to EC2 machine 
+## Deploying to EC2 machine
 
 1. Create an EC2 instance in AWS.
-<br/>
+   <br/>
 
 2. SSH into the EC2 instance.
-<br/>
+   <br/>
 
 3. Install Docker on the EC2 instance.
-<br/>
+   <br/>
 
 4. Add the `SSH_HOST`, `SSH_KEY` and `SSH_KEY` to the Github repository secrets
-<br/>
+   <br/>
 
 5. Create another .yaml file in the root of the repository (`.github/workflows/deploy-ec2.yml`) with following content:
-    ```yaml
-    name: Build and Deploy to Docker Hub
 
-    on:
-      push:
-        branches:
-          - master  # Adjusted to trigger on pushes to master
+   ```yaml
+   name: Build and Deploy to Docker Hub
 
-    jobs:
-      build-and-push:
-        runs-on: ubuntu-latest
-        steps:
-        - name: Check Out Repo
-          uses: actions/checkout@v2
+   on:
+     push:
+       branches:
+         - master # Adjusted to trigger on pushes to master
 
-        - name: Prepare Dockerfile
-          run: cp ./docker/Dockerfile.user ./Dockerfile
+   jobs:
+     build-and-push:
+       runs-on: ubuntu-latest
+       steps:
+         - name: Check Out Repo
+           uses: actions/checkout@v2
 
-        - name: Log in to Docker Hub
-          uses: docker/login-action@v1
-          with:
-            username: ${{ secrets.DOCKER_USERNAME }}
-            password: ${{ secrets.DOCKER_SECRET }}
+         - name: Prepare Dockerfile
+           run: cp ./docker/Dockerfile.user ./Dockerfile
 
-        - name: Build and Push Docker image
-          uses: docker/build-push-action@v2
-          with:
-            context: .
-            file: ./docker/Dockerfile.user
-            push: true
-            tags: ikdan/paytm-end-to-end:latest
+         - name: Log in to Docker Hub
+           uses: docker/login-action@v1
+           with:
+             username: ${{ secrets.DOCKER_USERNAME }}
+             password: ${{ secrets.DOCKER_SECRET }}
 
-        - name: Verify Pushed Image
-          run: docker pull ikdan/paytm-end-to-end:latest
+         - name: Build and Push Docker image
+           uses: docker/build-push-action@v2
+           with:
+             context: .
+             file: ./docker/Dockerfile.user
+             push: true
+             tags: ikdan/paytm-end-to-end:latest
 
-        - name: Deploy to EC2
-          uses: appleboy/ssh-action@master
-          with:
-            host: ${{ secrets.SSH_HOST }}
-            username: ${{ secrets.SSH_USERNAME }}
-            key: ${{ secrets.SSH_KEY }}
-            script: |
-              sudo docker pull ikdan/paytm-end-to-end:latest
-              sudo docker stop web-app || true
-              sudo docker rm web-app || true
-              sudo docker run -d --name web-app -p 3005:3000 ikdan/paytm-end-to-end:latest
-    ```
+         - name: Verify Pushed Image
+           run: docker pull ikdan/paytm-end-to-end:latest
+
+         - name: Deploy to EC2
+           uses: appleboy/ssh-action@master
+           with:
+             host: ${{ secrets.SSH_HOST }}
+             username: ${{ secrets.SSH_USERNAME }}
+             key: ${{ secrets.SSH_KEY }}
+             script: |
+               sudo docker pull ikdan/paytm-end-to-end:latest
+               sudo docker stop web-app || true
+               sudo docker rm web-app || true
+               sudo docker run -d --name web-app -p 3005:3000 ikdan/paytm-end-to-end:latest
+   ```
 
 6. Push the changes to the repository and see the CD pipeline in action.
 
@@ -273,13 +278,13 @@ Similarly, create Dockerfile for `merchant-app` and `bank-webhook` services.
 To deploy the application to Elastic Beanstalk, create an Elastic Beanstalk environment and add the following workflow action to the `deploy-ec2.yml` file:
 
 ```yaml
-- name: Deploy to Elastic beanstalk 
-  uses: appleboy/ssh-action@master 
+- name: Deploy to Elastic beanstalk
+  uses: appleboy/ssh-action@master
   with:
     host: ${{ secrets. SSH_HOST }}
     username: ${{ secrets. SSH_USERNAME }}
     key: ${{ secrets. SSH_KEY }}
-    script: sudo docker pull 100devs/week-18-class:latest sudo docker stop web-app | | true 
+    script: sudo docker pull 100devs/week-18-class:latest sudo docker stop web-app | | true
     sudo docker rm web-app || true
   sudo docker run -e DATABASE_URL ${{ SECRETS.DB_URL }} --restart-always -d --name web-app -p 3005:3000 100devs/ week-18-class:latest
 ```
@@ -290,21 +295,21 @@ To deploy the application to Elastic Beanstalk, create an Elastic Beanstalk envi
 
 1. Install Nginx on the EC2 instance.
 2. Create a new file in `/etc/nginx/nginx.conf` with the following content:
-    ```nginx
-    server {
-        listen 80;
-        server_name localhost;
 
-        location / {
-            proxy_pass http://localhost:3005;
-            proxy_http_version 1.1;
-            proxy_set_header Upgrade $http_upgrade;
-            proxy_set_header Connection 'upgrade';
-            proxy_set_header Host $host;
-            proxy_cache_bypass $http_upgrade;
-        }
-    }
-    ```
-4. Restart Nginx.
+   ```nginx
+   server {
+       listen 80;
+       server_name localhost;
 
+       location / {
+           proxy_pass http://localhost:3005;
+           proxy_http_version 1.1;
+           proxy_set_header Upgrade $http_upgrade;
+           proxy_set_header Connection 'upgrade';
+           proxy_set_header Host $host;
+           proxy_cache_bypass $http_upgrade;
+       }
+   }
+   ```
 
+3. Restart Nginx.
